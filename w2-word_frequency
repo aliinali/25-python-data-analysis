@@ -1,0 +1,167 @@
+import jieba
+import jieba.posseg as pseg
+import jieba.analyse
+from collections import Counter
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+import os
+from pylab import mpl
+from sklearn.feature_extraction.text import TfidfVectorizer
+import random
+from sklearn.metrics.pairwise import euclidean_distances
+
+mpl.rcParams['font.sans-serif'] = ['SimHei']
+mpl.rcParams['axes.unicode_minus'] = False
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+file_path1 = os.path.join(script_dir, "week2.txt")
+file_path2 = os.path.join(script_dir, "cn_stopwords.txt")
+
+fpath = 'C:\Windows\Fonts\simfang.ttf'
+
+all_words = []
+pure_words = []  
+content = ''
+
+number1 = random.randint(1,9)
+number2 = random.randint(0,number1)
+#打印前十行
+with open(file_path1,'r',encoding = 'utf-8') as file:
+
+    for i in range(10):
+        line = file.readline()
+        if i == number1:
+            line1 = line
+        if i == number2:
+            line2 = line
+        #print(line)    
+    
+    #分词
+    for line in file:
+        line = line.strip()
+        content += line
+
+        terms = jieba.cut(line)
+        terms = list(terms)
+        all_words.extend(terms)
+
+all_freq = Counter(all_words)  
+
+#排序 输出词频最高的前10词
+sorted_all_freq = sorted(all_freq.items(),key = lambda x:x[1],reverse = True)
+print("去除停用词前高频词：")
+for i in range(10):
+    print(sorted_all_freq[i][0],sorted_all_freq[i][1])
+
+#引入停用词表
+with open(file_path2,'r',encoding = 'utf-8') as f:
+    con = f.readlines()
+    stopwords = set()
+    for i in con:
+        i = i.replace("\n","")
+        stopwords.add(i)
+        stopwords.add(' ') #输出高频词发现有空格 就补了一个
+
+#去除停用词  
+for word in all_words:
+    if word not in stopwords:
+        pure_words.append(word)
+
+pure_freq = Counter(pure_words)  
+
+#排序 输出词频最高的前10词
+sorted_pure_freq = sorted(pure_freq.items(),key = lambda x:x[1],reverse = True)
+print('\n去除停用词后高频词：')
+for i in range(10):
+    print(sorted_pure_freq[i][0],sorted_pure_freq[i][1])
+
+#筛选词频＞1000的高频词
+fre = 1000
+filtered_words = {key:value for key,value in pure_freq.items() if value > fre}
+
+#词云图
+
+wd = WordCloud(font_path=fpath)
+wd.fit_words(filtered_words)
+#wd.to_file('./wd.png')
+plt.imshow(wd)
+plt.axis('off')
+plt.title('高频词词云图')
+plt.show()
+'''
+'''
+#词性标注
+pos_words = list(pseg.cut(content))
+
+pos_freq = Counter(pos for word,pos in pos_words)
+sorted_pos_freq = sorted(pos_freq.items(),key = lambda x:x[1],reverse = True)
+total_pos_freq = sum(freq for pos,freq in sorted_pos_freq)
+print('\n不同词性的出现频率:')
+for pos,freq in sorted_pos_freq:
+    print(f"{pos}: {freq / total_pos_freq:.2%}")
+
+
+#对动词和名词进行可视化
+v_words = Counter()
+for word,pos in pos_words:
+    if pos == 'v':
+        v_words[word] += 1
+
+
+wd = WordCloud(font_path=fpath)
+wd.fit_words(v_words)
+wd.to_file('./v_wd.png')
+plt.imshow(wd)
+plt.axis('off')
+plt.title('动词词云图')
+plt.show()
+
+n_words = Counter()
+for word,pos in pos_words:
+    if pos == 'n':
+        n_words[word] += 1
+
+
+wd = WordCloud(font_path=fpath)
+wd.fit_words(n_words)
+#wd.to_file('./wd.png')
+plt.imshow(wd)
+plt.axis('off')
+plt.title('名词词云图')
+plt.show()
+'''
+'''
+#生成bigram(tuple) 统计频数并排序
+bigrams = [(pure_words[i],pure_words[i+1]) for i in range (len(pure_words)-1)]
+bigrams_freq = Counter(bigrams)
+sorted_bigrams_freq = sorted(bigrams_freq.items(),key = lambda x:x[1],reverse = True)
+
+print('\n高频bigrams：')
+for i in range(10):
+    print(sorted_bigrams_freq[i][0],sorted_bigrams_freq[i][1])    #观察频数前10的bigrams
+
+#合并频数>300的bigrams为词组并可视化
+bigrams_high_freq = {''.join(key):value for key,value in bigrams_freq.items() if value > 300}
+
+wd = WordCloud(font_path=fpath)
+wd.fit_words(bigrams_high_freq)
+#wd.to_file('./wd.png')
+plt.imshow(wd)
+plt.axis('off')
+plt.title('高频bigrams词云图')
+plt.show()
+
+#基于TF-IDF进行关键词抽取
+tags = jieba.analyse.extract_tags(content, topK=10, withWeight=False, allowPOS=())
+print(' '.join(tags))
+
+feature_words = list(tags)
+sentences = [line1,line2]
+vectorizer = TfidfVectorizer(vocabulary=feature_words)
+tfidf_matrix = vectorizer.fit_transform(sentences)
+print("TF-IDF向量表示：")
+print(tfidf_matrix.toarray())
+
+euclidean_dist = euclidean_distances(tfidf_matrix)
+print("欧氏距离矩阵：")
+print(euclidean_dist)
