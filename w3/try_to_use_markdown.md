@@ -8,5 +8,4 @@ TTTTTTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSTTTTTTTTTT
 print('am i right?')
 ```
 
-![my picture](https://tse3-mm.cn.bing.net/th/id/OIP-C.xR2aYCBkFPCAK7QdJKR1OAHaE8?rs=1&pid=ImgDetMain)
-
+![my picture](https://gitee.com/aliinali/25_data_analysis_pics/tree/master/w3/stars-emotions.png)
