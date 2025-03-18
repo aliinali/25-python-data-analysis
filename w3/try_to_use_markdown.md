@@ -8,4 +8,4 @@ TTTTTTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSTTTTTTTTTT
 print('am i right?')
 ```
 
-![my picture](C:\Users\Huawei\Desktop\好一个大学\课内学习\大二下\ppppp数据分析\w3\stars-emotions.png)
+![my picture](https://note.youdao.com/web/#/file/WEBb57b2a9dc4ffea865519f39f54a61931/image/WEB39b7332d57084161832deb34cb576e77/)
