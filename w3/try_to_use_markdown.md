@@ -8,4 +8,4 @@ TTTTTTTTTTTTTTEEEEEEEEEEEEEEEEESSSSSSSSSSSSSTTTTTTTTTT
 print('am i right?')
 ```
 
-![my picture](w3/stars-emotions.png)
+![my picture](C:\Users\Huawei\Desktop\好一个大学\课内学习\大二下\ppppp数据分析\w3\stars-emotions.png)
