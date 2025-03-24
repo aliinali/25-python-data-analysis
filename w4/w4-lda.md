@@ -203,6 +203,21 @@ for time, doc_topic in zip(times, doc_topic_distr):
 ## 4.序列化保存
 > 利用pickle或json对所得到的lda模型、对应的词频矩阵、以及特征表示等进行序列化保存。
 
+在对应函数（lda_analysis）中保存
+```python
+import pickle
+    # 保存 LDA 模型
+    with open('lda_model.pkl', 'wb') as f:
+        pickle.dump(lda, f)
+         
+    # 保存词频矩阵
+    with open('matrix.pkl', 'wb') as f:
+        pickle.dump(X, f)
+    
+    # 保存特征表示
+    with open('features.pkl', 'wb') as f:
+        pickle.dump(vectorizer.get_feature_names_out(),f)
+```
 
 ## 5.根据困惑度选取最优话题数
 > 超参数k（即话题的数目）变化时，评价LDA模型的一个指标即困惑度（lda.perplexity）会随之波动，尝试绘制困惑度随话题数目k变化的曲线，找到较优的k。
