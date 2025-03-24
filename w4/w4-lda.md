@@ -63,8 +63,148 @@ def Doc2Bow(text_at_time_dic) -> dict:
     return matrix_at_time_dic
 ```
 ### 输出
+```python
+{2018: <Compressed Sparse Row sparse matrix of dtype 'int64'
+        with 90191 stored elements and shape (2624, 11936)>, 2017: <Compressed Sparse Row sparse matrix of dtype 'int64'
+        with 69990 stored elements and shape (2108, 10416)>, 2016: <Compressed Sparse Row sparse matrix of dtype 'int64'
+        with 49613 stored elements and shape (1737, 8563)
+```
+可以看见2018对应的矩阵是最大的，说明2018的文档具有最丰富的词汇表，当然，也有可能是停用词过滤不充分
 
-## 根据困惑度选取最优话题数
+## 3.文本的话题分析
+> 实现一个模块，通过一个或多个函数，借助sklearn.decomposition中的LatentDirichletAllocation构建主题模型（话题数目可以自主指定），并对发现的主题进行分析（每个主题对应的词语可利用model.components_来查看，每篇文档的主题概率分布可通过model.transform来查看）。也可以参考demo里的ldav.py，用gensim进行LDA分析，并进行可视化.
+
+### 思路
+新建python文件find_feature.py,保存在主文件同一文件夹中。定义函数lda_analysis(doc,n_topics,n_words),将文档转换为词频矩阵，获取主题关键词及文档-主题分布
+
+### 代码
+```python
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
+
+def lda_analysis(documents, n_topics=5, n_words=10):
+
+    # 将文档转换为词频矩阵
+    vectorizer = CountVectorizer(stop_words='english')
+    X = vectorizer.fit_transform(documents)
+    
+    # 构建 LDA 模型
+    lda = LatentDirichletAllocation(n_components=n_topics, random_state=42)
+    lda.fit(X)
+    
+    # 获取主题关键词
+    feature_names = vectorizer.get_feature_names_out()
+    topic_keywords = {}
+    for topic_idx, topic in enumerate(lda.components_):
+        top_features_ind = topic.argsort()[:-n_words - 1:-1]
+        topic_keywords[topic_idx] = [feature_names[i] for i in top_features_ind]
+    
+    # 获取文档-主题分布
+    doc_topic_distr = lda.transform(X)
+    
+    return topic_keywords, doc_topic_distr
+```
+主文件中：先将所有字符串合并，对所有文档依次调用函数，打印主题关键词及文档主题分布
+```python
+
+combined_documents = {time: " ".join(doc) for time, doc in doc_at_time_dic.items()}
+documents = list(combined_documents.values())
+times = list(combined_documents.keys())
+
+# 对所有文档进行 LDA 分析
+topic_keywords, doc_topic_distr = lda_analysis(documents, n_topics=k, n_words=5)
+
+# 打印每个时间点的主题关键词和文档-主题分布
+for time, doc_topic in zip(times, doc_topic_distr):
+    print(f"时间: {time}")
+    print("主题关键词:")
+    for topic_idx, keywords in topic_keywords.items():
+        print(f"  主题 {topic_idx}: {' '.join(keywords)}")
+    print("文档-主题分布:")
+    print(f"  主题分布: {doc_topic}")
+    print("-" * 50)
+```
+### 输出（部分）
+```python 
+时间: 2013
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [5.79731315e-01 9.88632683e-06 9.88637359e-06 4.20248912e-01]
+--------------------------------------------------       
+时间: 2012
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [6.24590158e-01 1.80292163e-05 1.80291220e-05 3.75373784e-01]
+--------------------------------------------------       
+时间: 2011
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [7.55236675e-01 1.55212727e-05 1.55211980e-05 2.44732283e-01]
+--------------------------------------------------       
+时间: 2010
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [8.70977957e-01 1.79368238e-05 1.79367507e-05 1.28986169e-01]
+--------------------------------------------------       
+时间: 2009
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [9.83038081e-01 1.71415323e-05 1.71414817e-05 1.69276364e-02]
+--------------------------------------------------       
+时间: 2008
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [9.99976193e-01 7.76579575e-06 7.76577635e-06 8.27570244e-06]
+--------------------------------------------------       
+时间: 2007
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [9.99935843e-01 2.08460070e-05 2.08459379e-05 2.24649881e-05]
+--------------------------------------------------       
+时间: 2006
+主题关键词:
+  主题 0: 双皮奶 三星 不过 味道 好吃
+  主题 1: 挤得 一塌糊涂 兴致 响亮 天生
+  主题 2: 顺人 地露 愛必 厚出 到益
+  主题 3: 双皮奶 好吃 味道 甜品 广州
+文档-主题分布:
+  主题分布: [9.99701541e-01 9.72162674e-05 9.72176553e-05 1.04025501e-04]
+--------------------------------------------------
+```
+## 4.序列化保存
+> 利用pickle或json对所得到的lda模型、对应的词频矩阵、以及特征表示等进行序列化保存。
+
+
+## 5.根据困惑度选取最优话题数
 > 超参数k（即话题的数目）变化时，评价LDA模型的一个指标即困惑度（lda.perplexity）会随之波动，尝试绘制困惑度随话题数目k变化的曲线，找到较优的k。
 
 ### 思路
