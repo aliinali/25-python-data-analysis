@@ -135,6 +135,32 @@ text._get_similar_words('生活',10)
 2.语义的多样性决定了语境（上下文文本）的丰富程度，生活的上下文文本更多样，覆盖的词语也更分散
 
 
+## 扩展情绪词典
+> 这些相似词可否用来扩展我们之前使用过的情感词典？请在类中再增加一个方法expand_emotion_lexicion，对情感词典进行扩充，如对于情感词典中已有的人工标定的词，找到与其相似的词（如top 5)，标记为同样的情感标签，并加入到词典，观察其对情绪分类是否有提升作用（比如增加了覆盖率等）。
+***思路***
+分别读取情绪词典，对前100个词找最相近的5个词（文本就是微博文本），将找到的5个词写在txt文件最末。通过查看文件末尾的词，以及重新运行w3情绪分析的程序，判断情绪词典的覆盖是否上升。
+***代码***
+```python
+def expand_emotion_lexicion(self):
+        print("开始执行字典扩建,当前时间:",time.time())
+        for emotion in ['anger', 'disgust', 'fear', 'sadness', 'joy']:
+            file_path = os.path.join(EMOTION_DIR, f'{emotion}.txt')
+            with open(file_path, 'r', encoding='utf-8') as f:
+            #扩展每个字典前100个词语的近义词
+                words = [line.strip() for line in f.readlines()]
+            with open(file_path, 'a', encoding='utf-8') as f:
+                for word in words[:100]:  # 只扩展前100个词
+                    if word and word in self.model.wv:
+                        similar_words = self._get_similar_words(word, 5)
+                        for similar_word, similarity in similar_words:
+                            f.write('\n' + similar_word)
+```
+
+***运行结果***
+情绪词典扩展前的结果：
+
+
+
 
 
 
