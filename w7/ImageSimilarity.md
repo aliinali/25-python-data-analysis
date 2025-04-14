@@ -102,5 +102,59 @@ def pixel_difference(self,image1,image2):
 ## 4. 图片的大模型嵌入。
 > 在ImageQuery类中实现基于大模型的相似性计算方法，即利用相关API(具体见Demo ali_image_embed.py或者ark_image_embed.py)首先将图片嵌入为向量，继而通过向量的余弦相似度等给出相似性大小(cos_simi.py)。注意，选一个大模型实现即可，ali和字节均提供一定的免费token额度。
 
+在my_ali_model模块中储存API_KEY,MODEL，以及调用Model的方法get_embeddings
+```python
+
+def get_embeddings(image_path):
+    with open(image_path, "rb") as image_file:
+    # 读取文件并转换为Base64
+        base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+    image_format = 'png' # 根据实际情况修改，比如png, jpg、bmp 等
+    image_data = f"data:image/{image_format};base64,{base64_image}"
+    #输入数据
+    inputs = [{'image': image_data}]
+    # 调用模型接口
+    resp = dashscope.MultiModalEmbedding.call(
+        api_key = KEY,
+        model = MODEL,
+        input = inputs
+        )
+    if resp.status_code == HTTPStatus.OK:
+
+        return resp.output['embeddings'][0]['embedding']#1024维向量
+    #print(json.dumps(resp.output, ensure_ascii=False, indent=4))   
+```
+在主文件中import相关内容
+```python
+from my_ali_model import KEY, MODEL, get_embeddings  #get_embeddings 调用API的方法
+```
+
+在ImageQuery类中定义计算余弦相似度的方法
+```python
+
+    def cos_simi(self,image1_path,image2_path):
+        embedings1 = get_embeddings(image1_path)
+        embedings2 = get_embeddings(image2_path)
+        #把1024维向量转换为二维数组
+        vec1 = np.array(embedings1).reshape(1, -1)
+        vec2 = np.array(embedings2).reshape(1, -1)
+        
+        similarity = cosine_similarity(vec1, vec2)
+        #输出是一个矩阵,如果只比较两个向量，结果是 1x1 矩阵，所以取 [0][0]。
+        return similarity[0][0]
+```
+
+***对以上三种方法进行测试***
+
+test1:
+
+test2:
+
+test3:
+
+
+
+
+
 
 
