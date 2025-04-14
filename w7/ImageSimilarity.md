@@ -236,6 +236,38 @@ test1和test3的余弦相似性:  0.3703323488321294
 与Pearson相似，同样是在[-1,1]间。似乎余弦比Pearson更“温和”一点
 
 
+## 5. （附加）hash
+> 安装imagehash库，利用其提供的一些hash算法（如average_hash)等，来计算两张图片间的相似性，即其hash值的差异。
+
+```python
+from imagehash import average_hash
+```
+
+```python
+    def hash_simi(self,image1,image2):
+        hash_value1 = average_hash(image1)
+        hash_value2 = average_hash(image2)
+        dis = abs(hash_value1-hash_value2)
+        return dis
+```
+***测试***
+```python
+
+    #测试哈希
+    dis1 = image_query.hash_simi(image1,image2)
+    dis2 = image_query.hash_simi(image1, image4)
+    print('test1和test2的哈希距离：',dis1)
+    print('test1和test4的哈希距离：',dis2)
+
+```
+***输出***
+```python
+test1和test2的哈希距离： 23
+test1和test4的哈希距离： 31
+```
+
+
+
 
 
 
