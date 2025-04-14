@@ -62,8 +62,6 @@ File Not Found:C:\Users\Huawei\Desktop\好一个大学\课内学习\大二下\pp
 先检查图片size，大小不一致即捕获NotMatchedError。计算时将image转换为‘RGB’数值计算
 
 ```python
-   
-
 def pixel_difference(self,image1,image2):
         '''
         图片像素相似性计算
@@ -161,6 +159,7 @@ test3_image(97*97): ；领结猫
 test4_image(100*100): 领结猫
 
 ![4](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w7/test4_100.png)
+> 我写python作业就像这样
 
 ```python
 
@@ -229,9 +228,11 @@ test1和test3的余弦相似性:  0.3703323488321294
 对于size不匹配的比格多栋与领结猫，捕获了错误，输出了报错信息：The sizes of images are not matched
 
 **直方图相似性（Pearson）**
+
 计算Pearson在[-1,1]之间，正负号代表正相关/负相关，绝对值越大相关性越强。显然 小比和小比的相关性（0.99）>> 小比和领结猫的相关性（0.29），所以验证算法还是不错滴（虽然我忧心0.99是否过高，或许可以进一步验证）
 
 **余弦相似性**
+
 与Pearson相似，同样是在[-1,1]间。似乎余弦比Pearson更“温和”一点
 
 
