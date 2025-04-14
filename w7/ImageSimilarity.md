@@ -96,7 +96,7 @@ def pixel_difference(self,image1,image2):
         ins1 = image1.histogram()
         ins2 = image2.histogram()
         pearson = pearsonr(ins1,ins2)
-        return pearson[1]
+        return pearson[0]
 ```
 
 ## 4. 图片的大模型嵌入。
@@ -146,13 +146,102 @@ from my_ali_model import KEY, MODEL, get_embeddings  #get_embeddings 调用API�
 
 ***对以上三种方法进行测试***
 
-test1:
+test1_image(100*100): 比格多栋
 
-test2:
+![1](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w7/test1_100.png)
 
-test3:
+test2_image(100*100): 比格多栋
+
+![2](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w7/test2_100.png)
+
+test3_image(97*97): ；领结猫
+
+![3](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w7/test3_97.png)
+
+test4_image(100*100): 领结猫
+
+![4](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w7/test4_100.png)
+
+```python
+
+#创建实例
+    image_query = ImageQuery()
+    #转换为PIL.image
+    image1 = image_query._create_an_image(image1_path)
+    image2 = image_query._create_an_image(image2_path)
+    image3 = image_query._create_an_image(image3_path)
+    image4 = image_query._create_an_image(image4_path)
+    #测试pixel
+    try:
+        pixel_12 = image_query.pixel_difference(image1,image2) #同size
+        print('test1和test2的逐像素相减: ',pixel_12)
+    except ImageQueryShapeNotMatchError as iqsnme:
+        print(iqsnme.message)
+
+    try:
+        pixel_14 = image_query.pixel_difference(image1,image4) #同size
+        print('test1和test4的逐像素相减: ',pixel_14)
+    except ImageQueryShapeNotMatchError as iqsnme:
+        print(iqsnme.message)
+    
+
+    try:
+        pixel_13 = image_query.pixel_difference(image2,image3) #不同size
+    except ImageQueryShapeNotMatchError as iqsnme:
+        print(iqsnme.message)
+
+    #测试直方图
+    pearson_12 = image_query.histogram_difference(image1, image2)
+    pearson_13 = image_query.histogram_difference(image1, image3)
+    print('test1和test2的直方图相似性: ',pearson_12)
+    print('test1和test3的直方图相似性: ',pearson_13)
+
+    #测试余弦
+    similarity_12 = image_query.cos_simi(image1_path, image2_path)
+    similarity_13 = image_query.cos_simi(image1_path, image3_path)
+    print('test1和test2的余弦相似性: ',similarity_12)
+    print('test1和test3的余弦相似性: ',similarity_13)
+
+    
+```
+
+***输出***
+```python
+图片加载成功！
+图片加载成功！
+图片加载成功！
+图片加载成功！
+test1和test2的逐像素相减:  187.90103911381237
+test1和test4的逐像素相减:  378.4850259778453
+The sizes of images are not matched
+test1和test2的直方图相似性:  0.9902254846951382
+test1和test3的直方图相似性:  0.2962063668227174
+test1和test2的余弦相似性:  0.9725522853151289
+test1和test3的余弦相似性:  0.3703323488321294
+```
+
+逐个分析：
+
+**逐像素相减的方法**：
+
+很明显：比格多栋-比格多栋（187） < 比格多栋-领结猫（378）
+
+对于size不匹配的比格多栋与领结猫，捕获了错误，输出了报错信息：The sizes of images are not matched
+
+**直方图相似性（Pearson）**
+计算Pearson在[-1,1]之间，正负号代表正相关/负相关，绝对值越大相关性越强。显然 小比和小比的相关性（0.99）>> 小比和领结猫的相关性（0.29），所以验证算法还是不错滴（虽然我忧心0.99是否过高，或许可以进一步验证）
+
+**余弦相似性**
+与Pearson相似，同样是在[-1,1]间。似乎余弦比Pearson更“温和”一点
 
 
+
+
+
+
+
+
+    
 
 
 
