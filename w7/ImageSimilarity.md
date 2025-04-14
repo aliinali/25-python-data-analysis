@@ -37,7 +37,9 @@ class ImageQuery:
             return image
 
 ```
-***测试***
+***测试***  
+
+其中image1_path刻意改过
 ```python
 
 if __name__ == '__main__':
@@ -47,17 +49,58 @@ if __name__ == '__main__':
     image3_path = r'C:\Users\Huawei\Desktop\好一个大学\课内学习\大二下\ppppp数据分析\w7-异常处理与图片相似性\test3_97.png'
 ```
 
-
+***输出***
+```python
+File Not Found:C:\Users\Huawei\Desktop\好一个大学\课内学习\大二下\ppppp数据分析\w7-异常处理与图片相似性\test_100.png
+图片加载成功！
+图片加载成功！
+```
 
 ## 2. 图片的相似性计算。
 > 在ImageQuery类中实现一种简单图片相似性的计算方法pixel_difference，即直接对两个图片逐相素相减，并累积求和差异的绝对值，继而除以相素总数。注意该方法可能会抛出一个叫ImageQueryShapeNotMatchError的自定义异常，其继承了ImageQueryError（本次作业自定义的顶层异常类），即当比较相似性的两张图片形状（长宽）不一致性时。请在该方法中抛出该异常，包含两个图片的形状信息。
 
+先检查图片size，大小不一致即捕获NotMatchedError。计算时将image转换为‘RGB’数值计算
+
+```python
+   
+
+def pixel_difference(self,image1,image2):
+        '''
+        图片像素相似性计算
+        '''
+        if image1.size == image2.size:
+            width,height = image2.size
+            total_pixel_difference = 0
+            image1 = image1.convert('RGB')
+            image2 = image2.convert('RGB')
+            for x in range(width):
+                for y in range(height):
+                    r1, g1, b1 = image1.getpixel((x,y))
+                    r2, g2, b2 = image2.getpixel((x,y))
+                    total_pixel_difference += sum(abs(a - b) for a, b in zip((r1, g1, b1), (r2, g2, b2)))
+
+            pixel_difference = abs(total_pixel_difference)/(width*height)
+            return pixel_difference
+```
+ 
 
 
 ## 3. 图片的直方图相似性计算。
 >在ImageQuery类中实现更多的相似性计算方法。具体地，利用PIL.Image类的histogram方法，获取图片相素的直方图，进而用scipy.states中的相关性计算方法来得到不同的相似性，如pearson，spearman，kendall等。这些方法并不要求图片形状一致。注意，这些相似性方法还能够返回显著性。
 
-
+先把图片转为灰色（否则Pearson系数格外的小），转为直方图后计算Pearson相关系数
+```python
+    def histogram_difference(self,image1,image2):
+        image1 = image1.convert('L')
+        image2 = image2.convert('L')
+        ins1 = image1.histogram()
+        ins2 = image2.histogram()
+        pearson = pearsonr(ins1,ins2)
+        return pearson[1]
+```
 
 ## 4. 图片的大模型嵌入。
 > 在ImageQuery类中实现基于大模型的相似性计算方法，即利用相关API(具体见Demo ali_image_embed.py或者ark_image_embed.py)首先将图片嵌入为向量，继而通过向量的余弦相似度等给出相似性大小(cos_simi.py)。注意，选一个大模型实现即可，ali和字节均提供一定的免费token额度。
+
+
+
