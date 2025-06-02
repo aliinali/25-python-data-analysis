@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
 #### ps
 
-截止目前（25-6-2-19:05）没找到合适的人和我一起运行client连服务器（包括但不限于：网不通、虚拟环境没配好等），所以先把目前的测试结果写一下
+截止目前（25-6-2-19:05）没找到合适的人和我一起运行多线程（包括但不限于：网不通等），所以先把目前的测试结果写一下
 
 ## 输出
 ![client终端](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/client.png)
@@ -231,3 +231,8 @@ log文件：
 感谢hzh同学
 ![视频](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/视频2.png)
 
+#### 更新（25-6-2-23:12）
+运行了多线程
+
+再次感谢hzh同学
+![hzh](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/hzh3.png)
