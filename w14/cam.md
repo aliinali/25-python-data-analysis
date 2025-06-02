@@ -216,16 +216,18 @@ if __name__ == "__main__":
 ```
 
 #### ps
-免责声明：
 
 截止目前（25-6-2-19:05）没找到合适的人和我一起运行client连服务器（包括但不限于：网不通、虚拟环境没配好等），所以先把目前的测试结果写一下
 
 ## 输出
-![client终端](https://github.com/aliinali/25-python-data-analysis/blob/95b0bed622b7ab40577a0dac608078a59690760a/w14/client.png)
+![client终端](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/client.png)
 
 log文件：
-![log文件](https://github.com/aliinali/25-python-data-analysis/blob/64083ceca00c89d87dc5b4d1c3d28175ce0dbef4/w14/%E6%97%A5%E5%BF%97.jpg)
+![log文件](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/日志.jpg)
 
 保存的视频： 可以正常播放
-![视频](https://github.com/aliinali/25-python-data-analysis/blob/95b0bed622b7ab40577a0dac608078a59690760a/w14/%E8%A7%86%E9%A2%91.png)
+![视频](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/视频.png)
+
+感谢hzh同学
+![视频](https://gitee.com/aliinali/25_data_analysis_pics/raw/master/w14/视频2.png)
 
