@@ -221,5 +221,6 @@ if __name__ == "__main__":
 截止目前（25-6-2-19:05）没找到合适的人和我一起运行client连服务器（包括但不限于：网不通、虚拟环境没配好等），所以先把目前的测试结果写一下
 
 ## 输出
+![log文件](https://github.com/aliinali/25-python-data-analysis/blob/64083ceca00c89d87dc5b4d1c3d28175ce0dbef4/w14/%E6%97%A5%E5%BF%97.jpg)
 
-
+![视频]()
